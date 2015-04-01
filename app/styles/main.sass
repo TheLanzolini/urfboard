@@ -47,5 +47,38 @@ body
   text-align: center
   padding: 20px 0 20px 0
   background-color: #B2EBF2
-
+h2
+  font-family: 'Slabo 27px', serif
+  text-align: center
+  font-weight: 300
+.champ-square
+  width: 48px
+  height: 48px
+  overflow: hidden
+  border-radius: 100%
+.win-loss-circle
+  width: 20px
+  height: 20px
+  border-radius: 100%
+  margin-top: 15px
+  &.winner
+    background-color: rgba(#4CAF50, 0.75)
+  &.loser
+    background-color: rgba(#F44336, 0.75)
+.table
+  &--headers
+    overflow: hidden
+    border-bottom: 1px solid #E0E0E0
+    padding-bottom: 5px
+  &--header
+    float: left
+    width: 100px
+  &--row
+    overflow: hidden
+    padding: 10px 5px
+    border-bottom: 1px solid #E0E0E0
+    line-height: 3em
+  &-cell
+    float: left
+    width: 100px
 

@@ -1,6 +1,37 @@
-there will be some stuff here.... eventually
-<br>
-but
-<br>
-in the meantime lets have some height
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<h2>The Most Damage Dealt To Champions in URF</h2>
+<div class="table">
+  <div class="table--headers">
+    <div class="table--header">
+      Champ
+    </div>
+    <div class="table--header">
+      W/L
+    </div>
+    <div class="table--header">
+      Damage
+    </div>
+    <div class="table--header">
+      Rating
+    </div>
+    <div class="table--header">
+      Accolades
+    </div>
+  </div>
+  <div ng-repeat="participant in participants" class="table--row">
+    <div class="table-cell">
+      <champ-img champ="participant.championId"></champ-img>
+    </div>
+    <div class="table-cell">
+      <div class="win-loss-circle" ng-class="{'winner': participant.stats.winner, 'loser': !participant.stats.winner}"></div>
+    </div>
+    <div class="table-cell">
+      {{participant.stats.totalDamageDealtToChampions}}
+    </div>
+    <div class="table-cell">
+      WEENIE
+    </div>
+    <div class="table-cell">
+      icon
+    </div>
+  </div>
+</div>
