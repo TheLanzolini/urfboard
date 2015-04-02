@@ -1,25 +1,28 @@
 <h2>The Most Damage Dealt To Champions in URF</h2>
 <div class="top-ten">
-  <div class="top-three">
-    <div class="first">
-      <div class="champion-image"></div>
-      <div class="rank-image"></div>
-      <div class="damage-delt">{{participants[0].stats.totalDamageDealtToChampions}}</div>
-    </div>
-    <div class="second">
-      <div class="champion-image"></div>
-      <div class="rank-image"></div>
-      <div class="damage-delt">{{participants[1].stats.totalDamageDealtToChampions}}</div>
-    </div>
-    <div class="third">
-      <div class="champion-image"></div>
-      <div class="rank-image"></div>
-      <div class="damage-delt">{{participants[2].stats.totalDamageDealtToChampions}}</div>
+  <div ng-repeat="participant in top_ten.participants" class="place-{{$index}}">
+    
+    <div class="rank-image"></div>
+    <div class="damage-delt"></div>
+  </div>
+
+  <div class="table">
+    <div class="table--row" ng-repeat="participant in top_ten.participants" class="place-{{$index + 1}}">
+      <div class="table-cell place">
+        {{$index + 1}}
+      </div>
+      <div class="table-cell champ-image">
+        <champ-img champ="participant.championId"></champ-img>
+      </div>
+      <div class="table-cell rank-image">
+        rank img
+      </div>
+      <div class="table-cell damage">
+        {{participant.stats.totalDamageDealtToChampions}}
+      </div>
     </div>
   </div>
-  <div class="others">
-    <div class="damage-dealt" ng-repeat="participant in participants" ng-if="$index > 3">{{participant.stats.totalDamageDealtToChampions}}</div>
-  </div>
+
 </div>
 <h2>Recent Matches of URF. Possible Contenders?</h2>
 <div class="table">

@@ -14,13 +14,22 @@ angular.module('urfboardApp')
 
 function mainCtrl($scope, $firebaseObject, Ref, $http, $rootScope, $q, $timeout, $firebaseArray){
 
-  $scope.match_id = 1778704162;
 
   $rootScope.lol_key = $firebaseObject(Ref.child('lol_key'));
-  $rootScope.lol_key.$loaded().then(makeRequest).catch(alert);
+  $scope.top_ten = $firebaseObject(Ref.child('top_ten'));
+  $scope.match_ids = $firebaseArray(Ref.child('match_ids'));
 
-  $scope.top_ten = $firebaseArray(Ref.child('top_ten'));
-  $scope.top_ten.$loaded().then(populateTopTen).catch(alert);
+
+  $rootScope.lol_key.$loaded().then(function(){
+    $scope.top_ten.$loaded().then(function(){
+      // var match_id = 1778704162;
+      var match_id = 1780726063;
+      makeRequest(match_id);
+    }).catch(alert);
+  }).catch(alert);
+
+  
+  
 
   $scope.compare = function(a,b){
     if (a.stats.totalDamageDealtToChampions > b.stats.totalDamageDealtToChampions)
@@ -41,39 +50,46 @@ function mainCtrl($scope, $firebaseObject, Ref, $http, $rootScope, $q, $timeout,
     console.log($scope.top_ten);
   }
 
-  function makeRequest(){
-    $scope.api_url = 'https://na.api.pvp.net/api/lol/na/v2.2/match/'+$scope.match_id+'?includeTimeline=false&api_key='+$rootScope.lol_key.$value;
+  function makeRequest(match_id){
+    $scope.api_url = 'https://na.api.pvp.net/api/lol/na/v2.2/match/'+match_id+'?includeTimeline=false&api_key='+$rootScope.lol_key.$value;
     $http.get($scope.api_url)
       .then(handleSuccess)
       .then(compareToTopTen)
     ;
     function handleSuccess(data){
-      $scope.participants = data.data.participants
-      return $q.when($scope.participants, $scope.top_ten.length);
+      $scope.participants = data.data.participants;
+      console.log($scope.match_ids, data.data);
+      // $scope.match_ids.$add(data.data.matchId);
+      $scope.found = false;
+      for(var i=0;i<$scope.match_ids.length;i++){
+        if($scope.match_ids[i].$value == data.data.matchId){
+          $scope.found = true; 
+        }
+      }
+      if(!$scope.found){
+        $scope.match_ids.$add(data.data.matchId);
+      }
+      return $q.when($scope.participants);
     }
     function handleError(err){
       console.log(err);
     }
 
     function compareToTopTen(){
-      if($scope.top_ten.length == 0){
+      if(!$scope.top_ten.isSet){
         console.log('making top ten');
-        $scope.participants.sort($scope.compare)
-        for(var i=0;i<$scope.participants.length;i++){
-          $scope.top_ten.$add($scope.participants[i]);
-        }
+        $scope.top_ten.isSet = true;
+        $scope.top_ten.participants = $scope.participants.sort($scope.compare);
+        $scope.top_ten.$save();
+      }else if(!$scope.found){
+        console.log('top ten is set, match has not been processed merging array and splicing');
+        $scope.top_ten.participants = $scope.top_ten.participants.concat($scope.participants);
+        $scope.top_ten.participants.sort($scope.compare);
+        $scope.top_ten.participants.splice(10, 10);
+        console.log($scope.top_ten.participants, $scope.participants);
+        $scope.top_ten.$save();
       }else{
-        console.log('top ten already there');
-        var copied = angular.copy($scope.top_ten);
-        var extended = copied.concat($scope.participants);
-        extended.sort($scope.compare);
-        extended.splice(10, 10);
-        if(angular.equals($scope.top_ten, extended)){
-          console.log('its same');
-        }else{
-          console.log('its diff');
-          console.log(extended);
-        }
+        console.log('match has already been processed');
       }
     }
 
