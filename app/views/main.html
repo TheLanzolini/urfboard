@@ -43,6 +43,9 @@
       Accolades
     </div>
   </div>
+  <div ng-hide="participantsExist()" class="matches-loading">
+    <h2>Stats are coming in. Either waiting for requests, or waiting until next 5 minute period. So just like, wait. k?</h2>
+  </div>
   <div ng-repeat="participant in participants | orderBy:'-stats.totalDamageDealtToChampions'" class="table--row">
     <div class="table-cell">
       <champ-img champ="participant.championId"></champ-img>

@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * @ngdoc function
@@ -12,24 +12,67 @@ angular.module('urfboardApp')
   .directive('champImg', champImg)
 ;
 
-function mainCtrl($scope, $firebaseObject, Ref, $http, $rootScope, $q, $timeout, $firebaseArray){
+function mainCtrl(
+  $scope, 
+  $firebaseObject, 
+  Ref, 
+  $http, 
+  $rootScope, 
+  $q, 
+  $timeout, 
+  $firebaseArray, 
+  $interval
+  ){
 
 
   $rootScope.lol_key = $firebaseObject(Ref.child('lol_key'));
   $scope.top_ten = $firebaseObject(Ref.child('top_ten'));
   $scope.match_ids = $firebaseArray(Ref.child('match_ids'));
 
+  $scope.urfMatchIds = [];
+
 
   $rootScope.lol_key.$loaded().then(function(){
     $scope.top_ten.$loaded().then(function(){
-      // var match_id = 1778704162;
-      var match_id = 1780726063;
-      makeRequest(match_id);
+      $scope.getUrfMatchIds().then(function(data){
+        $scope.urfMatchIds = $scope.urfMatchIds.concat(data);
+        $interval(function(){
+          $scope.getUrfMatchIds().then(function(data){
+            $scope.urfMatchIds = $scope.urfMatchIds.concat(data);
+          });
+        }, 360000);
+      }).catch(alert);
     }).catch(alert);
   }).catch(alert);
 
+  $interval(function(){
+    if($scope.urfMatchIds[0]){
+      makeRequest($scope.urfMatchIds[0]).then(function(){
+        $scope.urfMatchIds.splice(0,1);
+      });
+    }
+  }, 10000);
+
+  $scope.participantsExist = function(){
+    if($scope.participants){
+      return true;
+    }else{
+      return false;
+    }
+  }
   
-  
+  $scope.getUrfMatchIds = function(){
+    var cur_time = new Date().getTime();
+    var coeff = 1000 * 60 * 5;
+    var timestamp = new Date(Math.floor(cur_time / coeff) * coeff - 2 * coeff);
+
+    var urfUrl = 'https://na.api.pvp.net/api/lol/na/v4.1/game/ids?beginDate='+timestamp/1000+'&api_key='+$rootScope.lol_key.$value;
+    return $http.get(urfUrl)
+      .then(function(data){
+        return data.data;
+      })
+    ;
+  }
 
   $scope.compare = function(a,b){
     if (a.stats.totalDamageDealtToChampions > b.stats.totalDamageDealtToChampions)
@@ -46,19 +89,14 @@ function mainCtrl($scope, $firebaseObject, Ref, $http, $rootScope, $q, $timeout,
     }, 5000);
   }
 
-  function populateTopTen(){
-    console.log($scope.top_ten);
-  }
-
   function makeRequest(match_id){
     $scope.api_url = 'https://na.api.pvp.net/api/lol/na/v2.2/match/'+match_id+'?includeTimeline=false&api_key='+$rootScope.lol_key.$value;
-    $http.get($scope.api_url)
+    return $http.get($scope.api_url)
       .then(handleSuccess)
       .then(compareToTopTen)
     ;
     function handleSuccess(data){
       $scope.participants = data.data.participants;
-      console.log($scope.match_ids, data.data);
       // $scope.match_ids.$add(data.data.matchId);
       $scope.found = false;
       for(var i=0;i<$scope.match_ids.length;i++){
@@ -77,19 +115,16 @@ function mainCtrl($scope, $firebaseObject, Ref, $http, $rootScope, $q, $timeout,
 
     function compareToTopTen(){
       if(!$scope.top_ten.isSet){
-        console.log('making top ten');
         $scope.top_ten.isSet = true;
         $scope.top_ten.participants = $scope.participants.sort($scope.compare);
         $scope.top_ten.$save();
       }else if(!$scope.found){
-        console.log('top ten is set, match has not been processed merging array and splicing');
         $scope.top_ten.participants = $scope.top_ten.participants.concat($scope.participants);
         $scope.top_ten.participants.sort($scope.compare);
         $scope.top_ten.participants.splice(10, 10);
-        console.log($scope.top_ten.participants, $scope.participants);
         $scope.top_ten.$save();
       }else{
-        console.log('match has already been processed');
+        // console.log('match has already been processed');
       }
     }
 
