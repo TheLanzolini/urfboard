@@ -10,6 +10,9 @@
 angular.module('urfboardApp')
   .controller('MainCtrl', mainCtrl)
   .directive('champImg', champImg)
+  .directive('itemImg', itemImg)
+  .filter('compareDamage', compareDamage)
+  .filter('showRank', showRank)
 ;
 
 function mainCtrl(
@@ -26,14 +29,14 @@ function mainCtrl(
 
 
   $rootScope.lol_key = $firebaseObject(Ref.child('lol_key'));
-  $scope.top_ten = $firebaseObject(Ref.child('top_ten'));
+  $rootScope.top_ten = $firebaseObject(Ref.child('top_ten'));
   $scope.match_ids = $firebaseArray(Ref.child('match_ids'));
 
   $scope.urfMatchIds = [];
 
 
   $rootScope.lol_key.$loaded().then(function(){
-    $scope.top_ten.$loaded().then(function(){
+    $rootScope.top_ten.$loaded().then(function(){
       $scope.getUrfMatchIds().then(function(data){
         $scope.urfMatchIds = $scope.urfMatchIds.concat(data);
         $interval(function(){
@@ -151,3 +154,81 @@ function champImg($http, $rootScope){
     }
   };
 }
+
+function itemImg($http, $rootScope){
+  return {
+    restrict: 'E',
+    scope: {
+      itemId: '=item'
+    },
+    template: '<div class="item-square"></div>',
+    link: function(scope, element, attrs){
+      if(scope.itemId != 0){
+        $http.get('https://global.api.pvp.net/api/lol/static-data/na/v1.2/item/'+scope.itemId+'?locale=en_US&itemData=image&api_key='+$rootScope.lol_key.$value)
+          .success(function(res){
+            scope.itemName = res.name;
+            scope.itemImgLink = 'http://ddragon.leagueoflegends.com/cdn/5.6.1/img/sprite/'+res.image.sprite;
+            element.find('div').css('background-image', 'url('+scope.itemImgLink+')');
+            element.find('div').css('background-position-x', '-'+res.image.x+'px');
+            element.find('div').css('background-position-y', '-'+res.image.y+'px');
+          })
+        ;
+      }
+    }
+  };
+}
+
+function compareDamage($rootScope){
+  return function(damage){
+    return Math.round((damage/$rootScope.top_ten.participants[0].stats.totalDamageDealtToChampions) * 10);
+  }
+}
+
+function showRank(){
+  return function(input){
+    switch(input){
+      case 0: 
+        return "Probably DC'd";
+        break;
+      case 1:
+        return "Weenie";
+        break;
+      case 2:
+        return "Caster Minion";
+        break;
+      case 3:
+        return "Melee Minion";
+        break;
+      case 4:
+        return "Scuttle";
+        break;
+      case 5:
+        return "Gromp";
+        break;
+      case 6:
+        return "Dragon";
+        break;
+      case 7:
+        return "Baron";
+        break;
+      case 8:
+        return "Dominating!";
+        break;
+      case 9: 
+        return "Wicked Sick!";
+        break;
+      case 10:
+        return "G-G-Godlike!";
+        break;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+

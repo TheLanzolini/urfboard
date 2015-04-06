@@ -1,31 +1,65 @@
 <h2>The Most Damage Dealt To Champions in URF</h2>
 <div class="top-ten">
-  <div ng-repeat="participant in top_ten.participants" class="place-{{$index}}">
-    
-    <div class="rank-image"></div>
-    <div class="damage-delt"></div>
-  </div>
-
   <div class="table">
-    <div class="table--row" ng-repeat="participant in top_ten.participants" class="place-{{$index + 1}}">
+    <div class="table--headers">
+      <div class="table--header">
+      Rank
+      </div>
+      <div class="table--header">
+        Champ
+      </div>
+      <div class="table--header">
+        W/L
+      </div>
+      <div class="table--header">
+        Damage
+      </div>
+      <div class="table--header">
+        Rating
+      </div>
+    </div>
+    <div class="table--row place-{{$index + 1}}" ng-repeat="participant in top_ten.participants">
       <div class="table-cell place">
         {{$index + 1}}
+        <div ng-show="$index == 0">The "Tons of Damage" Award</div>
+        <div ng-show="$index == 1">The "Must Spectate" Award</div>
+        <div ng-show="$index == 2">The "Got the Reset" Award</div>
       </div>
-      <div class="table-cell champ-image">
+      <div class="table-cell champ-image" ng-class="{'winner': participant.stats.winner, 'loser': !participant.stats.winner}">
         <champ-img champ="participant.championId"></champ-img>
       </div>
+      <div class="table-cell">
+        <div class="win-loss-circle" ng-class="{'winner': participant.stats.winner, 'loser': !participant.stats.winner}"></div>
+      </div>
       <div class="table-cell rank-image">
-        rank img
+        <div ng-show="$index == 0">
+          <div class="rank-square">
+            <img src="http://img2.wikia.nocookie.net/__cb20140716201826/leagueoflegends/images/7/7f/Phreak_%26_Tons_of_Damage.jpg"/>  
+          </div>
+        </div>
+        <div ng-show="$index == 1">
+          <div class="rank-square">
+            <img src="https://pbs.twimg.com/profile_images/427148585876992000/VsdQuZyO_400x400.jpeg">
+          </div>
+        </div>
+        <div ng-show="$index == 2">
+          <div class="rank-square">
+            <img src="https://pbs.twimg.com/profile_images/3465425611/f772cbec6ea437618a34e7f23a17018b_400x400.jpeg">
+          </div>
+        </div>
       </div>
       <div class="table-cell damage">
         {{participant.stats.totalDamageDealtToChampions}}
+      </div>
+      <div ng-hide="$index == 0 || $index == 1 || $index == 2" class="table-cell rating">
+        {{participant.stats.totalDamageDealtToChampions | compareDamage | showRank}}
       </div>
     </div>
   </div>
 
 </div>
 <h2>Recent Matches of URF. Possible Contenders?</h2>
-<div class="table">
+<div class="table incoming">
   <div class="table--headers">
     <div class="table--header">
       Champ
@@ -39,8 +73,8 @@
     <div class="table--header">
       Rating
     </div>
-    <div class="table--header">
-      Accolades
+    <div class="table--header items">
+      Items
     </div>
   </div>
   <div ng-hide="participantsExist()" class="matches-loading">
@@ -57,10 +91,15 @@
       {{participant.stats.totalDamageDealtToChampions}}
     </div>
     <div class="table-cell">
-      WEENIE
+      {{participant.stats.totalDamageDealtToChampions | compareDamage | showRank}}
     </div>
-    <div class="table-cell">
-      icon
+    <div class="table-cell items">
+      <item-img item="participant.stats.item0"></item-img>
+      <item-img item="participant.stats.item1"></item-img>
+      <item-img item="participant.stats.item2"></item-img>
+      <item-img item="participant.stats.item3"></item-img>
+      <item-img item="participant.stats.item4"></item-img>
+      <item-img item="participant.stats.item5"></item-img>
     </div>
   </div>
 </div>
