@@ -199,7 +199,7 @@ function itemImg($http, $rootScope){
 function urfAudio($rootScope){
   return {
     restrict: 'E',
-    template: '<audio id="newrecord"><source src="audio/newrecord.mp3" type="audio/mpeg"></audio>'
+    template: '<audio id="newrecord"><source src="http://themushroomkingdom.net/sounds/wav/ssbm/ssbm_hammer_theme.wav" type="audio/mpeg"></audio>'
   //   link: function(scope, element, attrs){
   //     var vid = document.getElementById("newrecord");
   //     var topTenWatch = $rootScope.top_ten.$loaded(function(){
