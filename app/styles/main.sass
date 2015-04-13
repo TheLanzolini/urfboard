@@ -22,6 +22,12 @@ body
   padding: 15px
   background-color: rgba(255, 255, 255, 0.5)
   position: relative
+#urf-modals
+  background-color: #80DEEA
+  text-align: center
+  color: black
+  position: absolute
+  z-index: 100
 .header
   position: relative
 .main-title
@@ -89,6 +95,16 @@ h2
     width: 100px
     &.items
       width: 350px
+  &.incoming
+    width: 65%
+    margin: auto
+.info-trigger
+  &:hover
+    cursor: pointer
+  &.selected
+    background-color: #80DEEA
+  img
+    width: 350px
 .top-ten
   width: 50%
   margin-left: 50%

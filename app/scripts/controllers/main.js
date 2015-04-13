@@ -34,6 +34,16 @@ function mainCtrl(
 
   $scope.urfMatchIds = [];
 
+  $scope.modalShow = false;
+
+  $scope.showInfoModal = function(){
+    if($scope.modalShow){
+      $scope.modalShow = false;
+    }else{
+      $scope.modalShow = true;
+    }
+  }
+
 
   $rootScope.lol_key.$loaded().then(function(){
     $rootScope.top_ten.$loaded().then(function(){
