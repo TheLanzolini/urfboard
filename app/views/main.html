@@ -1,10 +1,14 @@
+<!-- <audio>
+  <source src="audio/newrecord.mp3" type="audio/mpeg">
+</audio> -->
+<urf-audio></urf-audio>
 <div class="info-trigger" ng-click="showInfoModal()" ng-class="{'selected': modalShow}">INFO TOGGLE</div>
 <div ng-show="modalShow" id="urf-modals">
   <div class="info">
     <h2>Welcome to the URFBoard!</h2>
     <p>This app is using AngularJS and Firebase. And Firebase's Angular wrapper: AngularFire.</p>
     <p>This app polls for match ids from the current closest 5 minute period, and then keeps polling every 5 minutes ther</p>
-    <p>The app will then go through all the matches and all the players that were in that match, and check their total <em>Damage Done to Champions</em></p>
+    <p>The app will then go through all the matches and all the players that were in that match, and check their total <em>Damage Done to Champions.</em> If someone makes the top ten, you will know thanks to audio ;)</p>
     <p>I had a lot more planned for this app, but unfortunately, I couldn't invest the time due to working so much this week. You can thank the NHL Bracket Challenge for that -_- (I work as a web dev making fantasy sports games)</p>
     <p>I didn't use any templating for this, just HTML, and used sass for styling.</p>
     <p>I am more versed with other frameworks, but I decided to try out using Firebase and AngluarFire. It was hard to choose since there are a lot out there.</p>

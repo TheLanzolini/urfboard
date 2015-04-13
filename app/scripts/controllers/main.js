@@ -11,6 +11,7 @@ angular.module('urfboardApp')
   .controller('MainCtrl', mainCtrl)
   .directive('champImg', champImg)
   .directive('itemImg', itemImg)
+  .directive('urfAudio', urfAudio)
   .filter('compareDamage', compareDamage)
   .filter('showRank', showRank)
 ;
@@ -27,7 +28,7 @@ function mainCtrl(
   $interval
   ){
 
-
+  console.log('You may be considering other entries to win, but this says otherwise: http://i.imgur.com/FJsJrey.jpg');
   $rootScope.lol_key = $firebaseObject(Ref.child('lol_key'));
   $rootScope.top_ten = $firebaseObject(Ref.child('top_ten'));
   $scope.match_ids = $firebaseArray(Ref.child('match_ids'));
@@ -132,9 +133,16 @@ function mainCtrl(
         $scope.top_ten.participants = $scope.participants.sort($scope.compare);
         $scope.top_ten.$save();
       }else if(!$scope.found){
+        var before = $scope.top_ten.participants;
         $scope.top_ten.participants = $scope.top_ten.participants.concat($scope.participants);
         $scope.top_ten.participants.sort($scope.compare);
         $scope.top_ten.participants.splice(10, 10);
+        var after = $scope.top_ten.participants;
+        if(!angular.equals(before, after)){
+          console.log('A NEW RECORD!');
+          var vid = document.getElementById("newrecord");
+          vid.play();
+        }
         $scope.top_ten.$save();
       }else{
         // console.log('match has already been processed');
@@ -186,6 +194,22 @@ function itemImg($http, $rootScope){
       }
     }
   };
+}
+
+function urfAudio($rootScope){
+  return {
+    restrict: 'E',
+    template: '<audio id="newrecord"><source src="audio/newrecord.mp3" type="audio/mpeg"></audio>'
+  //   link: function(scope, element, attrs){
+  //     var vid = document.getElementById("newrecord");
+  //     var topTenWatch = $rootScope.top_ten.$loaded(function(){
+  //       $rootScope.top_ten.$watch(function(){
+  //         console.log('A new record!');
+  //         vid.play();
+  //       });
+  //     });
+  //   }
+  }
 }
 
 function compareDamage($rootScope){
